@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador Lei 15.270/2025 | Com Máscara R$</title>
+    <title>Simulador Lei 15.270/2025 | Educativo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -12,6 +12,10 @@
         .tab-active { border-bottom: 2px solid #2563eb; color: #2563eb; font-weight: 600; }
         .input-field { @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border font-mono text-right; }
         .info-tooltip { @apply text-xs text-gray-500 mt-1 italic; }
+        /* Scrollbar customizada para o memorial */
+        .memorial-scroll::-webkit-scrollbar { width: 6px; }
+        .memorial-scroll::-webkit-scrollbar-track { background: #1e293b; }
+        .memorial-scroll::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800">
@@ -20,8 +24,8 @@
     <header class="bg-indigo-900 text-white p-5 shadow-lg">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <div>
-                <h1 class="text-xl font-bold"><i class="fas fa-calculator mr-2"></i>Simulador Lei 15.270/2025</h1>
-                <p class="text-indigo-200 text-sm">Com formatação monetária automática (R$)</p>
+                <h1 class="text-xl font-bold"><i class="fas fa-university mr-2"></i>Simulador Didático Lei 15.270/2025</h1>
+                <p class="text-indigo-200 text-sm">Ferramenta de cálculo e aprendizagem da Nova Tributação</p>
             </div>
             <div class="text-right hidden sm:block">
                 <span class="bg-indigo-800 text-xs py-1 px-3 rounded text-indigo-200">Vigência: 01/01/2026</span>
@@ -41,7 +45,7 @@
                 2. Dividendos
             </button>
             <button onclick="switchTab('irpfm')" id="tab-irpfm" class="px-6 py-3 text-gray-500 hover:bg-gray-50 rounded-t-lg transition whitespace-nowrap">
-                3. Imposto Mínimo
+                3. Imposto Mínimo (Educativo)
             </button>
         </div>
 
@@ -54,15 +58,13 @@
                     <!-- Inputs -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">Rendimento Tributável (Bruto)</label>
-                        <!-- type="text" para aceitar a máscara R$ -->
                         <input type="text" inputmode="numeric" id="sal-bruto" class="input-field text-lg font-bold text-blue-900" 
                                value="R$ 6.000,00" oninput="formatCurrency(this); calcSalary()">
-                        <p class="info-tooltip">Digite apenas números. O sistema formata (centavos automáticos).</p>
+                        <p class="info-tooltip">Salários, Pró-labore. O sistema aplica a tabela progressiva com fade-in.</p>
 
                         <div class="grid grid-cols-2 gap-4 mt-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Dependentes</label>
-                                <!-- Dependentes continua number pois é quantidade -->
                                 <input type="number" id="sal-deps" class="input-field text-center" value="0" oninput="calcSalary()">
                             </div>
                             <div>
@@ -104,8 +106,8 @@
             
             <!-- Technical Breakdown Box -->
             <div class="bg-yellow-50 p-4 rounded border border-yellow-200 text-sm text-yellow-800">
-                <strong class="block mb-1"><i class="fas fa-search mr-1"></i> Auditoria da Faixa de Transição (R$ 5k - R$ 7.35k)</strong>
-                <p>Se a base estiver nesta faixa, o sistema aplica o <strong>Redutor Variável</strong>: <em>978,62 - (0,133145 × Base)</em>. Este valor é subtraído do imposto, criando a curva suave de tributação (fade-in) descrita na Lei.</p>
+                <strong class="block mb-1"><i class="fas fa-book-open mr-1"></i> Entenda a Lei (Faixa de Transição):</strong>
+                <p>Para evitar que um pequeno aumento de salário reduza o líquido ("efeito degrau"), a Lei usa uma fórmula linear entre R$ 5.000 e R$ 7.350. Em vez de uma alíquota fixa, aplica-se um <strong>Redutor Variável</strong> que diminui conforme a renda sobe, suavizando a entrada na tributação.</p>
             </div>
         </div>
 
@@ -117,7 +119,8 @@
                 <div class="grid md:grid-cols-2 gap-8">
                     <div>
                         <div class="bg-red-50 border-l-4 border-red-400 p-3 mb-4 text-xs text-red-800">
-                            <strong>Regra do Penhasco (Cliff):</strong> Se o acumulado mensal ultrapassar R$ 50.000,00, a alíquota de 10% incide sobre <strong>todo o valor</strong>, não apenas sobre o excedente.
+                            <strong><i class="fas fa-exclamation-triangle"></i> Ponto de Atenção: Efeito Penhasco (Cliff)</strong>
+                            <p>Diferente do salário, não há progressividade aqui. Se passar de R$ 50.000,00 mensais, paga-se 10% sobre <strong>TUDO</strong>, não só sobre o excesso.</p>
                         </div>
 
                         <label class="block text-sm font-semibold text-gray-700">Já distribuído este mês (mesma fonte)</label>
@@ -150,9 +153,8 @@
             </div>
         </div>
 
-        <!-- TAB 3: IRPFM -->
+        <!-- TAB 3: IRPFM (COM MEMORIAL) -->
         <div id="content-irpfm" class="hidden space-y-6">
-            <!-- Projection Button -->
             <div class="flex justify-end">
                 <button onclick="projectAnnual()" class="bg-indigo-600 text-white text-sm px-4 py-2 rounded shadow hover:bg-indigo-700 transition flex items-center">
                     <i class="fas fa-sync-alt mr-2"></i> Importar/Projetar Dados Mensais
@@ -160,78 +162,75 @@
             </div>
 
             <div class="grid md:grid-cols-3 gap-6">
-                <!-- Column 1: Composição da RGA -->
+                <!-- Column 1: Inputs -->
                 <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-200 md:col-span-1">
-                    <h3 class="text-sm font-bold uppercase text-gray-500 mb-3 border-b pb-1">1. Renda Global Ampliada (RGA)</h3>
+                    <h3 class="text-sm font-bold uppercase text-gray-500 mb-3 border-b pb-1">1. Renda e Impostos Pagos</h3>
                     
                     <label class="block text-xs font-semibold text-gray-700 mt-2">Salários/Pró-labore (Anual)</label>
                     <input type="text" inputmode="numeric" id="irpfm-salario" class="input-field text-sm" placeholder="R$ 0,00" oninput="formatCurrency(this); calcIRPFM()">
+                    <input type="text" inputmode="numeric" id="cred-salario" class="input-field text-xs bg-gray-50 text-gray-500 mt-1" placeholder="Imposto Pago (R$)" oninput="formatCurrency(this); calcIRPFM()">
 
                     <label class="block text-xs font-semibold text-gray-700 mt-2 text-indigo-700">Dividendos ISENTOS (< 50k/mês)</label>
                     <input type="text" inputmode="numeric" id="irpfm-div-isentos" class="input-field text-sm border-indigo-200 bg-indigo-50" placeholder="R$ 0,00" oninput="formatCurrency(this); calcIRPFM()">
-                    <p class="text-[10px] text-indigo-600">Entra na base, mas crédito de imposto é 0.</p>
+                    <p class="text-[10px] text-indigo-600">Entra na RGA, mas imposto pago é 0.</p>
 
                     <label class="block text-xs font-semibold text-gray-700 mt-2">Dividendos TRIBUTADOS (> 50k/mês)</label>
                     <input type="text" inputmode="numeric" id="irpfm-div-trib" class="input-field text-sm" placeholder="R$ 0,00" oninput="formatCurrency(this); calcIRPFM()">
-
+                    
                     <label class="block text-xs font-semibold text-gray-700 mt-2">Aplicações Financeiras / Outros</label>
                     <input type="text" inputmode="numeric" id="irpfm-finan" class="input-field text-sm" placeholder="R$ 0,00" oninput="formatCurrency(this); calcIRPFM()">
+                    <input type="text" inputmode="numeric" id="cred-finan" class="input-field text-xs bg-gray-50 text-gray-500 mt-1" placeholder="Imposto Pago (R$)" oninput="formatCurrency(this); calcIRPFM()">
 
                     <!-- EXCLUSÃO -->
                     <div class="mt-4 pt-4 border-t border-dashed border-gray-300 opacity-75">
                         <label class="block text-xs font-semibold text-gray-500">Ganho de Capital (Bolsa) - EXCLUÍDO</label>
                         <input type="text" inputmode="numeric" id="irpfm-excluido" class="input-field text-sm bg-gray-100 text-gray-400" placeholder="R$ 0,00" oninput="formatCurrency(this); calcIRPFM()">
-                        <p class="text-[10px] text-gray-400">Renda Variável em bolsa não compõe RGA.</p>
                     </div>
                 </div>
 
-                <!-- Column 2: Imposto Já Pago -->
-                <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-200 md:col-span-1">
-                    <h3 class="text-sm font-bold uppercase text-gray-500 mb-3 border-b pb-1">2. Crédito de Imposto Pago</h3>
+                <!-- Column 2 & 3: Memorial e Resultado -->
+                <div class="md:col-span-2 bg-slate-800 text-white rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden">
                     
-                    <label class="block text-xs font-semibold text-gray-700 mt-2">IRRF sobre Salários</label>
-                    <input type="text" inputmode="numeric" id="cred-salario" class="input-field text-sm" placeholder="R$ 0,00" oninput="formatCurrency(this); calcIRPFM()">
+                    <!-- Painel de Resultado -->
+                    <div class="p-6 md:w-1/2 flex flex-col justify-between border-b md:border-b-0 md:border-r border-slate-700">
+                        <div>
+                            <h3 class="text-sm font-bold uppercase text-gray-400 mb-4 tracking-wider">Resultado da Apuração</h3>
+                            
+                            <div class="mb-4">
+                                <span class="block text-xs text-gray-400">Alíquota Efetiva Mínima</span>
+                                <span class="text-3xl font-bold text-yellow-400" id="res-aliq-min">0.00%</span>
+                                <span class="text-[10px] text-gray-500 ml-2">(Piso 600k | Teto 1.2M)</span>
+                            </div>
 
-                    <label class="block text-xs font-semibold text-gray-700 mt-2">IRRF sobre Dividendos (10%)</label>
-                    <!-- Campo somente leitura, cálculo automático -->
-                    <input type="text" id="cred-dividendos" class="input-field text-sm bg-gray-50 text-gray-500" readonly value="R$ 0,00">
-                    <p class="text-[10px] text-gray-500">Calculado auto (10% dos Div. Tributados).</p>
-
-                    <label class="block text-xs font-semibold text-gray-700 mt-2">IR sobre Aplicações (15-22.5%)</label>
-                    <input type="text" inputmode="numeric" id="cred-finan" class="input-field text-sm" placeholder="R$ 0,00" oninput="formatCurrency(this); calcIRPFM()">
-                </div>
-
-                <!-- Column 3: Resultado -->
-                <div class="bg-slate-800 text-white p-5 rounded-lg shadow-lg md:col-span-1 flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-sm font-bold uppercase text-gray-400 mb-3 border-b border-gray-600 pb-1">3. Apuração Final</h3>
-                        
-                        <div class="flex justify-between mt-4">
-                            <span class="text-sm text-gray-300">Renda Global (RGA):</span>
-                            <span class="font-bold" id="res-rga">R$ 0,00</span>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Imposto Mínimo Teórico:</span>
+                                    <span class="font-mono" id="res-teorico">R$ 0,00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">(-) Crédito de Imposto Pago:</span>
+                                    <span class="font-mono text-green-400" id="res-pago">R$ 0,00</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="flex justify-between mt-2">
-                            <span class="text-sm text-gray-300">Alíquota Efetiva Mínima:</span>
-                            <span class="font-bold text-yellow-400" id="res-aliq-min">0.00%</span>
-                        </div>
-                        <div class="text-[10px] text-gray-500 text-right mb-4">Piso: R$ 600k | Teto: R$ 1.2M</div>
-
-                        <div class="flex justify-between mt-2 border-t border-gray-600 pt-2">
-                            <span class="text-sm text-gray-300">IRPFM Teórico:</span>
-                            <span class="font-mono" id="res-teorico">R$ 0,00</span>
-                        </div>
-                        <div class="flex justify-between mt-1">
-                            <span class="text-sm text-gray-300">(-) Total Já Pago:</span>
-                            <span class="font-mono text-green-400" id="res-pago">R$ 0,00</span>
+                        <div class="mt-6 pt-4 border-t border-slate-600">
+                            <span class="block text-xs text-red-300 uppercase font-bold">Imposto Adicional a Pagar</span>
+                            <span class="block text-4xl font-bold text-white mt-1" id="res-catchup">R$ 0,00</span>
+                            <span class="text-xs text-gray-400 mt-1 block">Ajuste na Declaração Anual</span>
                         </div>
                     </div>
 
-                    <div class="mt-6 pt-4 border-t border-gray-600">
-                        <span class="block text-xs text-gray-400 uppercase">Imposto Adicional (Catch-up)</span>
-                        <span class="block text-3xl font-bold text-red-400" id="res-catchup">R$ 0,00</span>
-                        <p class="text-xs mt-2 text-gray-400 leading-tight" id="irpfm-msg">Simulação aguardando dados...</p>
+                    <!-- Memorial de Cálculo (O Professor) -->
+                    <div class="p-4 md:w-1/2 bg-slate-900/50 overflow-y-auto memorial-scroll h-full max-h-[500px]">
+                        <h3 class="text-xs font-bold uppercase text-indigo-300 mb-3 border-b border-indigo-900 pb-2">
+                            <i class="fas fa-list-ol mr-1"></i> Memorial de Cálculo (Passo a Passo)
+                        </h3>
+                        <div id="memorial-content" class="text-xs font-mono space-y-3 text-gray-300">
+                            <p class="italic text-gray-500">Insira os dados para gerar o memorial...</p>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -239,41 +238,23 @@
     </main>
 
     <script>
-        // --- Formatação e Máscaras ---
         const formatBRL = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
 
-        // Função de Máscara de Entrada
         function formatCurrency(input) {
-            let value = input.value.replace(/\D/g, ''); // Remove tudo que não é dígito
-            
-            if (value === '') {
-                input.value = '';
-                return;
-            }
-            
-            // Converte para float dividindo por 100 (centavos)
+            let value = input.value.replace(/\D/g, ''); 
+            if (value === '') { input.value = ''; return; }
             const floatValue = parseFloat(value) / 100;
-            
-            // Formata de volta para BRL
             input.value = floatValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
-        // Função Parse (Lê o valor formatado e devolve número puro para cálculo)
         function parse(id) {
             const el = document.getElementById(id);
             if (!el) return 0;
-            
-            // Se for dependentes (type="number"), lê direto
-            if (el.type === 'number') {
-                return parseFloat(el.value) || 0;
-            }
-            
-            // Se for moeda (type="text"), limpa a formatação
-            const clean = el.value.replace(/\D/g, ''); // Remove R$, pontos, vírgulas
+            if (el.type === 'number') return parseFloat(el.value) || 0;
+            const clean = el.value.replace(/\D/g, '');
             return (parseFloat(clean) / 100) || 0;
         }
 
-        // --- Navegação ---
         function switchTab(tabId) {
             ['salary', 'dividends', 'irpfm'].forEach(t => {
                 document.getElementById('content-' + t).classList.add('hidden');
@@ -285,62 +266,53 @@
             document.getElementById('tab-' + tabId).classList.remove('text-gray-500');
         }
 
-        // --- CÁLCULO 1: SALÁRIO ---
+        // --- CÁLCULOS SALÁRIO & DIVIDENDOS (Mantidos iguais) ---
         function calcSalary() {
             const bruto = parse('sal-bruto');
-            const deps = parse('sal-deps'); // numérico
+            const deps = parse('sal-deps'); 
             const outras = parse('sal-outras');
 
-            // 1. INSS Simplificado (Teto 2025/26 estimado ~998)
             let inss = 0;
             if (bruto < 1518) inss = bruto * 0.075;
             else if (bruto < 2793) inss = (1518*0.075) + ((bruto-1518)*0.09);
             else if (bruto < 4190) inss = (1518*0.075) + ((2793-1518)*0.09) + ((bruto-2793)*0.12);
             else if (bruto < 8157) inss = (1518*0.075) + ((2793-1518)*0.09) + ((4190-2793)*0.12) + ((bruto-4190)*0.14);
-            else inss = 998.00; // Teto
+            else inss = 998.00; 
             
             const base = Math.max(0, bruto - inss - (deps * 189.59) - outras);
-            
             let irrf = 0;
             let logic = "";
 
             if (base <= 5000) {
                 irrf = 0;
-                logic = "Isenção total (até R$ 5.000,00).";
+                logic = "Isento (Art. Isenção Ampliada).";
             } else if (base <= 7350) {
-                // FAIXA DE TRANSIÇÃO
-                const deducaoPadrao15 = 370.40; 
-                const redutorVariavel = Math.max(0, 978.62 - (0.133145 * base));
-                irrf = (base * 0.15) - deducaoPadrao15 - redutorVariavel;
-                irrf = Math.max(0, irrf);
-                logic = `Base (${formatBRL(base)}) × 15% - Ded.Padrão - Redutor Variável de ${formatBRL(redutorVariavel)}`;
+                const redutor = Math.max(0, 978.62 - (0.133145 * base));
+                irrf = Math.max(0, (base * 0.15) - 370.40 - redutor);
+                logic = `Faixa Transição. Redutor Variável aplicado: ${formatBRL(redutor)}.`;
             } else if (base <= 9000) {
                 irrf = (base * 0.15) - 370.40;
-                logic = "Alíquota 15% c/ dedução fixa padrão.";
+                logic = "Tabela Normal (15%).";
             } else if (base <= 11000) {
                 irrf = (base * 0.225) - 651.73;
-                logic = "Alíquota 22.5% c/ dedução fixa padrão.";
+                logic = "Tabela Normal (22.5%).";
             } else {
                 irrf = (base * 0.275) - 896.00;
-                logic = "Alíquota Teto 27.5% c/ dedução fixa padrão.";
+                logic = "Tabela Normal (27.5%).";
             }
-
-            const liquido = bruto - inss - irrf;
 
             document.getElementById('res-inss').innerText = formatBRL(inss);
             document.getElementById('res-base').innerText = formatBRL(base);
             document.getElementById('res-irrf').innerText = formatBRL(irrf);
-            document.getElementById('res-liquido').innerText = formatBRL(liquido);
+            document.getElementById('res-liquido').innerText = formatBRL(bruto - inss - irrf);
             document.getElementById('logic-desc').innerText = logic;
         }
 
-        // --- CÁLCULO 2: DIVIDENDOS ---
         function calcDividends() {
             const acumulado = parse('div-acumulado');
             const atual = parse('div-atual');
             const total = acumulado + atual;
             const limit = 50000;
-
             let retencao = 0;
             let status = "ISENTO";
             let colorClass = "text-green-600 bg-green-50 border-green-200";
@@ -355,13 +327,12 @@
 
             document.getElementById('res-div-total').innerText = formatBRL(total);
             document.getElementById('res-div-retencao').innerText = formatBRL(retencao);
-            
             const statusBox = document.getElementById('div-status-box');
             document.getElementById('div-status-text').innerText = status;
             statusBox.className = `text-center py-4 my-2 rounded border ${colorClass}`;
         }
 
-        // --- CÁLCULO 3: IRPFM ---
+        // --- CÁLCULO 3: IRPFM (COM MEMORIAL DETALHADO) ---
         function calcIRPFM() {
             const salarios = parse('irpfm-salario');
             const divIsentos = parse('irpfm-div-isentos');
@@ -371,52 +342,96 @@
 
             const credSal = parse('cred-salario');
             const credFinan = parse('cred-finan');
-            
             const credDiv = divTrib * 0.10;
-            // Atualiza visualização do crédito de dividendos
-            document.getElementById('cred-dividendos').value = formatBRL(credDiv);
 
             const rga = salarios + divIsentos + divTrib + finan;
             const piso = 600000;
             const teto = 1200000;
             let rate = 0;
+            let rateDesc = "";
 
-            if (rga > piso) {
-                if (rga >= teto) rate = 0.10;
-                else rate = 0.10 * ((rga - piso) / (piso));
+            // Lógica da Alíquota
+            if (rga <= piso) {
+                rate = 0;
+                rateDesc = "Abaixo do Piso (Isento)";
+            } else if (rga >= teto) {
+                rate = 0.10;
+                rateDesc = "Teto Máximo (10%)";
+            } else {
+                rate = 0.10 * ((rga - piso) / (piso)); // A fórmula do texto era sobre a diferença relativa
+                // Rechecando a lógica matemática do texto: "alguém com 900k (meio) terá 5%".
+                // (900 - 600) / 600 = 300/600 = 0.5. 0.5 * 10% = 5%. Confere.
+                rateDesc = "Fórmula Linear Progressiva";
             }
 
             const teorico = rga * rate;
             const pago = credSal + credDiv + credFinan;
             const catchup = Math.max(0, teorico - pago);
 
-            document.getElementById('res-rga').innerText = formatBRL(rga);
+            // UI
             document.getElementById('res-aliq-min').innerText = (rate * 100).toFixed(2) + "%";
             document.getElementById('res-teorico').innerText = formatBRL(teorico);
             document.getElementById('res-pago').innerText = formatBRL(pago);
             document.getElementById('res-catchup').innerText = formatBRL(catchup);
 
-            const msgEl = document.getElementById('irpfm-msg');
-            if (divIsentos > 0 && catchup > 0) {
-                msgEl.innerText = `Atenção: Seus ${formatBRL(divIsentos)} de dividendos isentos entraram na base (RGA), aumentando sua alíquota mínima, mas geraram R$ 0,00 de crédito. Isso causou o imposto adicional.`;
-                msgEl.className = "text-xs mt-2 text-yellow-300 leading-tight";
-            } else if (excluido > 0) {
-                msgEl.innerText = `Nota: O valor de ${formatBRL(excluido)} referente a Ganhos em Bolsa foi corretamente ignorado no cálculo da RGA.`;
-                msgEl.className = "text-xs mt-2 text-blue-300 leading-tight";
-            } else {
-                msgEl.innerText = "Cálculo realizado conforme Art. IRPFM da Lei 15.270.";
-                msgEl.className = "text-xs mt-2 text-gray-400 leading-tight";
+            // --- GERAÇÃO DO MEMORIAL (HTML) ---
+            let memorialHTML = "";
+
+            // Passo 1: Composição
+            memorialHTML += `<div class="mb-3 pb-2 border-b border-gray-700">`;
+            memorialHTML += `<strong class="text-indigo-400 block mb-1">1. Renda Global Ampliada (RGA)</strong>`;
+            memorialHTML += `<div>(+) Salários: ${formatBRL(salarios)}</div>`;
+            memorialHTML += `<div>(+) Div. Isentos: ${formatBRL(divIsentos)} <span class="text-yellow-500 text-[10px]">(Reconvocados)</span></div>`;
+            memorialHTML += `<div>(+) Div. Tributados: ${formatBRL(divTrib)}</div>`;
+            memorialHTML += `<div>(+) Aplicações: ${formatBRL(finan)}</div>`;
+            if (excluido > 0) {
+                memorialHTML += `<div class="text-gray-500 line-through decoration-gray-500">(Excluído) Bolsa: ${formatBRL(excluido)}</div>`;
             }
+            memorialHTML += `<div class="mt-1 font-bold text-white border-t border-gray-600 pt-1">(=) TOTAL RGA: ${formatBRL(rga)}</div>`;
+            memorialHTML += `</div>`;
+
+            // Passo 2: Alíquota
+            memorialHTML += `<div class="mb-3 pb-2 border-b border-gray-700">`;
+            memorialHTML += `<strong class="text-indigo-400 block mb-1">2. Definição da Alíquota</strong>`;
+            memorialHTML += `<div>Status: <span class="text-white">${rateDesc}</span></div>`;
+            if (rate > 0 && rate < 0.10) {
+                memorialHTML += `<div class="mt-1 text-[10px] text-gray-400">Fórmula: 10% x ((${formatBRL(rga)} - 600k) / 600k)</div>`;
+                memorialHTML += `<div class="font-bold text-yellow-400">(=) Alíquota Efetiva: ${(rate*100).toFixed(2)}%</div>`;
+            } else if (rate === 0.10) {
+                memorialHTML += `<div class="font-bold text-red-400">(=) Alíquota Fixa: 10%</div>`;
+            } else {
+                memorialHTML += `<div class="font-bold text-green-400">(=) Alíquota: 0%</div>`;
+            }
+            memorialHTML += `</div>`;
+
+            // Passo 3: Confronto
+            memorialHTML += `<div>`;
+            memorialHTML += `<strong class="text-indigo-400 block mb-1">3. Ajuste (Catch-Up)</strong>`;
+            memorialHTML += `<div>Deveria Pagar (Mínimo): ${formatBRL(teorico)}</div>`;
+            memorialHTML += `<div>Já Pagou (Retido): ${formatBRL(pago)}</div>`;
+            
+            if (catchup > 0) {
+                memorialHTML += `<div class="mt-2 p-2 bg-red-900/40 border border-red-800 rounded">`;
+                memorialHTML += `<div class="font-bold text-red-300">DIFERENÇA A PAGAR: ${formatBRL(catchup)}</div>`;
+                memorialHTML += `<p class="text-[10px] mt-1 text-gray-300">O valor retido na fonte foi menor que o piso exigido para sua renda global.</p>`;
+                memorialHTML += `</div>`;
+            } else {
+                 memorialHTML += `<div class="mt-2 p-2 bg-green-900/40 border border-green-800 rounded">`;
+                memorialHTML += `<div class="font-bold text-green-300">REGULAR (R$ 0,00)</div>`;
+                memorialHTML += `<p class="text-[10px] mt-1 text-gray-300">Seus impostos retidos já cobrem o mínimo exigido.</p>`;
+                memorialHTML += `</div>`;
+            }
+            memorialHTML += `</div>`;
+
+            document.getElementById('memorial-content').innerHTML = memorialHTML;
         }
 
-        // --- PROJEÇÃO AUTOMÁTICA ---
         function projectAnnual() {
             const salBase = parse('sal-bruto'); 
             const irrfMensal = parseFloat(document.getElementById('res-irrf').innerText.replace('R$','').replace(/\./g,'').replace(',','.')) || 0;
-            
             const divAtual = parse('div-atual');
             
-            const anualSal = salBase * 13.3;
+            const anualSal = salBase * 13.3; 
             const anualIrSal = irrfMensal * 13.3;
 
             let anualDivIsento = 0;
@@ -428,7 +443,6 @@
                 anualDivTrib = divAtual * 12;
             }
 
-            // Define valores com formatação R$
             document.getElementById('irpfm-salario').value = formatBRL(anualSal);
             document.getElementById('irpfm-div-isentos').value = formatBRL(anualDivIsento);
             document.getElementById('irpfm-div-trib').value = formatBRL(anualDivTrib);
@@ -438,7 +452,6 @@
             switchTab('irpfm');
         }
 
-        // Init
         calcSalary();
     </script>
 </body>
