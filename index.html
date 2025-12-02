@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador Lei 15.270/2025 | Comparativo</title>
+    <title>Simulador Lei 15.270/2025 | Completo e Corrigido</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -106,9 +106,9 @@
 
         <!-- TAB 3: IRPFM -->
         <div id="content-irpfm" class="hidden space-y-6">
-             <div class="flex justify-end">
-                <button onclick="projectAnnual('irpfm')" class="bg-indigo-600 text-white text-sm px-4 py-2 rounded shadow hover:bg-indigo-700 transition flex items-center">
-                    <i class="fas fa-sync-alt mr-2"></i> Importar/Projetar
+             <div class="flex justify-end mb-4">
+                <button onclick="projectAnnual()" class="bg-indigo-600 text-white text-sm px-4 py-2 rounded shadow hover:bg-indigo-700 transition flex items-center">
+                    <i class="fas fa-sync-alt mr-2"></i> Importar/Projetar das Abas 1 e 2
                 </button>
             </div>
             <div class="grid md:grid-cols-3 gap-6">
@@ -149,15 +149,13 @@
             </div>
         </div>
 
-        <!-- TAB 4: COMPARATIVO (NOVA ABA) -->
+        <!-- TAB 4: COMPARATIVO -->
         <div id="content-compare" class="space-y-6">
-            
             <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg flex items-start gap-3">
                 <i class="fas fa-info-circle text-blue-600 mt-1"></i>
                 <div class="text-sm text-blue-800">
                     <strong>Como funciona o comparativo?</strong><br>
                     Calculamos seus impostos baseados na <strong>Legislação Atual (2024/25)</strong> e confrontamos com a <strong>Nova Lei (2026)</strong>.
-                    Consideramos a tabela progressiva antiga vs. a nova (fade-in) e a mudança na isenção de dividendos.
                 </div>
             </div>
 
@@ -270,17 +268,26 @@
                 const btn = document.getElementById('tab-' + t);
                 if(content && btn){
                     content.classList.add('hidden');
-                    btn.className = "px-6 py-3 text-gray-500 hover:bg-gray-50 rounded-t-lg transition whitespace-nowrap";
+                    // Reset Classes
+                    if(t === 'compare') {
+                        btn.className = "px-6 py-3 text-gray-500 hover:bg-gray-50 rounded-t-lg transition whitespace-nowrap font-bold border-transparent";
+                    } else {
+                        btn.className = "px-6 py-3 text-gray-500 hover:bg-gray-50 rounded-t-lg transition whitespace-nowrap";
+                    }
                 }
             });
             document.getElementById('content-' + tabId).classList.remove('hidden');
             const activeBtn = document.getElementById('tab-' + tabId);
-            activeBtn.className = "tab-active px-6 py-3 hover:bg-gray-50 rounded-t-lg transition whitespace-nowrap font-bold text-indigo-700 bg-indigo-50 border-indigo-500";
+            
+            if(tabId === 'compare') {
+                activeBtn.className = "tab-active px-6 py-3 hover:bg-gray-50 rounded-t-lg transition whitespace-nowrap font-bold text-indigo-700 bg-indigo-50 border-indigo-500";
+            } else {
+                activeBtn.className = "tab-active px-6 py-3 hover:bg-gray-50 rounded-t-lg transition whitespace-nowrap font-bold text-indigo-700 bg-indigo-50 border-indigo-500";
+            }
         }
 
-        // --- CÁLCULOS PRINCIPAIS --- (Reuse from v4 logic mostly)
+        // --- CÁLCULOS PRINCIPAIS --- 
         function calcSalaryCore(bruto, deps, isNewLaw) {
-            // INSS Logic (Standard)
             let inss = 0;
             if (bruto < 1518) inss = bruto * 0.075;
             else if (bruto < 2793) inss = (1518*0.075) + ((bruto-1518)*0.09);
@@ -292,7 +299,6 @@
             let irrf = 0;
 
             if (isNewLaw) {
-                // NOVA LEI (Com Fade-in)
                 if (base <= 5000) irrf = 0;
                 else if (base <= 7350) {
                     const redutor = Math.max(0, 978.62 - (0.133145 * base));
@@ -301,25 +307,20 @@
                 else if (base <= 11000) irrf = (base * 0.225) - 651.73;
                 else irrf = (base * 0.275) - 896.00;
             } else {
-                // LEI ANTIGA (2024/25 Estimates)
-                // Isenção ~2259.20. Tabela Progressiva Padrão.
                 if (base <= 2259.20) irrf = 0;
                 else if (base <= 2826.65) irrf = (base * 0.075) - 169.44;
                 else if (base <= 3751.05) irrf = (base * 0.15) - 381.44;
                 else if (base <= 4664.68) irrf = (base * 0.225) - 662.77;
                 else irrf = (base * 0.275) - 896.00;
                 
-                // Simplified Discount Check (Old Law Feature)
-                // Discount of ~564.80 replacing deductions.
                 const baseSimp = Math.max(0, bruto - inss - 564.80);
                 let irrfSimp = 0;
-                 if (baseSimp <= 2259.20) irrfSimp = 0;
+                if (baseSimp <= 2259.20) irrfSimp = 0;
                 else if (baseSimp <= 2826.65) irrfSimp = (baseSimp * 0.075) - 169.44;
                 else if (baseSimp <= 3751.05) irrfSimp = (baseSimp * 0.15) - 381.44;
                 else if (baseSimp <= 4664.68) irrfSimp = (baseSimp * 0.225) - 662.77;
                 else irrfSimp = (baseSimp * 0.275) - 896.00;
-                
-                irrf = Math.min(irrf, irrfSimp); // Best benefit
+                irrf = Math.min(irrf, irrfSimp); 
             }
             return { irrf: Math.max(0, irrf), inss: inss, base: base };
         }
@@ -329,7 +330,7 @@
             const bruto = parse('sal-bruto');
             const deps = parse('sal-deps'); 
             const outras = parse('sal-outras');
-            const res = calcSalaryCore(bruto - outras, deps, true); // Nova Lei
+            const res = calcSalaryCore(bruto - outras, deps, true);
 
             let logic = "";
             if (res.base <= 5000) logic = "Isento (Art. Isenção Ampliada).";
@@ -360,12 +361,43 @@
             document.getElementById('div-status-text').innerText = status;
         }
 
+        // --- RESTORED PROJECT FUNCTION ---
+        function projectAnnual() {
+            const salBase = parse('sal-bruto');
+            // Clean text from "R$ 1.234,56" format to number
+            const irrfText = document.getElementById('res-irrf').innerText;
+            const irrfMensal = parseFloat(irrfText.replace(/[R$\s.]/g, '').replace(',', '.')) || 0;
+
+            const divAtual = parse('div-atual');
+
+            const anualSal = salBase * 13.3;
+            const anualIrSal = irrfMensal * 13.3;
+
+            let anualDivIsento = 0;
+            let anualDivTrib = 0;
+
+            if (divAtual <= 50000) {
+                anualDivIsento = divAtual * 12;
+            } else {
+                anualDivTrib = divAtual * 12;
+            }
+
+            document.getElementById('irpfm-salario').value = formatBRL(anualSal);
+            document.getElementById('irpfm-div-isentos').value = formatBRL(anualDivIsento);
+            document.getElementById('irpfm-div-trib').value = formatBRL(anualDivTrib);
+            document.getElementById('cred-salario').value = formatBRL(anualIrSal);
+
+            calcIRPFM();
+            switchTab('irpfm');
+        }
+
+        // --- RESTORED MEMORIAL LOGIC ---
         function calcIRPFM() {
-             // ... IRPFM Logic reused from v4 ... 
              const salarios = parse('irpfm-salario');
             const divIsentos = parse('irpfm-div-isentos');
             const divTrib = parse('irpfm-div-trib');
             const finan = parse('irpfm-finan');
+            const excluido = parse('irpfm-excluido');
             
             const credSal = parse('cred-salario');
             const credFinan = parse('cred-finan');
@@ -375,10 +407,17 @@
             const piso = 600000;
             const teto = 1200000;
             let rate = 0;
+            let rateDesc = "";
 
-            if (rga > piso) {
-                if (rga >= teto) rate = 0.10;
-                else rate = 0.10 * ((rga - piso) / (piso));
+            if (rga <= piso) {
+                rate = 0;
+                rateDesc = "Abaixo do Piso (Isento)";
+            } else if (rga >= teto) {
+                rate = 0.10;
+                rateDesc = "Teto Máximo (10%)";
+            } else {
+                rate = 0.10 * ((rga - piso) / (piso));
+                rateDesc = "Fórmula Linear Progressiva";
             }
 
             const teorico = rga * rate;
@@ -390,8 +429,38 @@
             document.getElementById('res-pago').innerText = formatBRL(pago);
             document.getElementById('res-catchup').innerText = formatBRL(catchup);
             
-            let memorialHTML = `<div>RGA: ${formatBRL(rga)}</div>`;
-            memorialHTML += `<div>Alíquota: ${(rate*100).toFixed(2)}%</div>`;
+            // RESTORED MEMORIAL HTML
+            let memorialHTML = `<div class="mb-3 pb-2 border-b border-gray-700">`;
+            memorialHTML += `<strong class="text-indigo-400 block mb-1">1. Renda Global Ampliada (RGA)</strong>`;
+            memorialHTML += `<div>(+) Salários: ${formatBRL(salarios)}</div>`;
+            memorialHTML += `<div>(+) Div. Isentos: ${formatBRL(divIsentos)} <span class="text-yellow-500 text-[10px]">(Reconvocados)</span></div>`;
+            memorialHTML += `<div>(+) Div. Tributados: ${formatBRL(divTrib)}</div>`;
+            memorialHTML += `<div>(+) Aplicações: ${formatBRL(finan)}</div>`;
+            if (excluido > 0) {
+                memorialHTML += `<div class="text-gray-500 line-through decoration-gray-500">(Excluído) Bolsa: ${formatBRL(excluido)}</div>`;
+            }
+            memorialHTML += `<div class="mt-1 font-bold text-white border-t border-gray-600 pt-1">(=) TOTAL RGA: ${formatBRL(rga)}</div>`;
+            memorialHTML += `</div>`;
+
+            memorialHTML += `<div class="mb-3 pb-2 border-b border-gray-700">`;
+            memorialHTML += `<strong class="text-indigo-400 block mb-1">2. Definição da Alíquota</strong>`;
+            memorialHTML += `<div>Status: <span class="text-white">${rateDesc}</span></div>`;
+            if (rate > 0 && rate < 0.10) {
+                memorialHTML += `<div class="mt-1 text-[10px] text-gray-400">Fórmula: 10% x ((${formatBRL(rga)} - 600k) / 600k)</div>`;
+            }
+            memorialHTML += `</div>`;
+
+            memorialHTML += `<div>`;
+            memorialHTML += `<strong class="text-indigo-400 block mb-1">3. Ajuste (Catch-Up)</strong>`;
+            memorialHTML += `<div>Deveria Pagar (Mínimo): ${formatBRL(teorico)}</div>`;
+            memorialHTML += `<div>Já Pagou (Retido): ${formatBRL(pago)}</div>`;
+            if (catchup > 0) {
+                memorialHTML += `<div class="mt-2 p-2 bg-red-900/40 border border-red-800 rounded font-bold text-red-300">DIFERENÇA: ${formatBRL(catchup)}</div>`;
+            } else {
+                 memorialHTML += `<div class="mt-2 p-2 bg-green-900/40 border border-green-800 rounded font-bold text-green-300">REGULAR</div>`;
+            }
+            memorialHTML += `</div>`;
+
             document.getElementById('memorial-content').innerHTML = memorialHTML;
         }
 
@@ -402,21 +471,13 @@
             const outrosAnual = parse('comp-outros');
             const deps = parse('comp-deps');
 
-            // 1. OLD LAW (Anual)
-            // Salary Tax
             const oldMonthlyRes = calcSalaryCore(salMensal, deps, false);
-            const oldAnnualSalTax = oldMonthlyRes.irrf * 13.3; // 13th + 1/3
-            // Dividend Tax (0%)
-            const oldAnnualDivTax = 0;
-            // Total Old
-            const oldTotalTax = oldAnnualSalTax + oldAnnualDivTax;
+            const oldAnnualSalTax = oldMonthlyRes.irrf * 13.3; 
+            const oldTotalTax = oldAnnualSalTax;
 
-            // 2. NEW LAW (Anual)
-            // Salary Tax
             const newMonthlyRes = calcSalaryCore(salMensal, deps, true);
             const newAnnualSalTax = newMonthlyRes.irrf * 13.3;
             
-            // Dividend Tax (Source)
             let newAnnualDivTaxSource = 0;
             let divIsentosAnual = 0;
             let divTribAnual = 0;
@@ -427,7 +488,6 @@
                 divIsentosAnual = divMensal * 12;
             }
 
-            // IRPFM Check
             const anualSal = salMensal * 13.3;
             const rga = anualSal + divIsentosAnual + divTribAnual + outrosAnual;
             let irpfmRate = 0;
@@ -436,23 +496,18 @@
                 else irpfmRate = 0.10 * ((rga - 600000) / 600000);
             }
             const irpfmTeorico = rga * irpfmRate;
-            const pagoNew = newAnnualSalTax + newAnnualDivTaxSource; // Assuming 'outros' tax is 0 or ignored for simplicity here as we don't input it
+            const pagoNew = newAnnualSalTax + newAnnualDivTaxSource; 
             const catchup = Math.max(0, irpfmTeorico - pagoNew);
-            
             const newTotalTax = pagoNew + catchup;
 
-            // UI UPDATES
-            // Old
             document.getElementById('old-ir-sal').innerText = formatBRL(oldAnnualSalTax);
-            document.getElementById('old-ir-div').innerText = formatBRL(oldAnnualDivTax);
+            document.getElementById('old-ir-div').innerText = formatBRL(0);
             document.getElementById('old-total').innerText = formatBRL(oldTotalTax);
 
-            // New
             document.getElementById('new-ir-sal').innerText = formatBRL(newAnnualSalTax);
             document.getElementById('new-ir-div').innerText = formatBRL(newAnnualDivTaxSource + catchup);
             document.getElementById('new-total').innerText = formatBRL(newTotalTax);
 
-            // Veredict
             const diff = oldTotalTax - newTotalTax;
             const box = document.getElementById('veredicto-box');
             const tag = document.getElementById('veredicto-tag');
@@ -465,29 +520,26 @@
                 tag.innerText = "NEUTRO";
                 val.className = "text-2xl font-black text-gray-600";
                 val.innerText = "R$ 0,00";
-                msg.innerText = "A mudança legislativa tem impacto irrelevante na sua carga tributária.";
+                msg.innerText = "Impacto irrelevante na carga tributária.";
             } else if (diff > 0) {
-                // Economia (Old was higher)
                 box.className = "col-span-2 bg-white rounded-lg shadow p-4 border-l-4 border-green-500";
                 tag.className = "px-3 py-1 rounded text-xs font-bold uppercase bg-green-100 text-green-800";
                 tag.innerText = "ECONOMIA";
                 val.className = "text-2xl font-black text-green-600";
                 val.innerText = formatBRL(diff);
-                msg.innerText = "A Nova Lei reduz sua carga, principalmente devido à ampliação da isenção salarial.";
+                msg.innerText = "A Nova Lei reduz sua carga devido à isenção salarial ampliada.";
             } else {
-                // Prejuízo (New is higher)
                 box.className = "col-span-2 bg-white rounded-lg shadow p-4 border-l-4 border-red-500";
                 tag.className = "px-3 py-1 rounded text-xs font-bold uppercase bg-red-100 text-red-800";
-                tag.innerText = "AUMENTO DE CARGA";
+                tag.innerText = "AUMENTO";
                 val.className = "text-2xl font-black text-red-600";
                 val.innerText = formatBRL(Math.abs(diff));
-                msg.innerText = "Você pagará mais imposto, provavelmente devido à tributação de dividendos ou IRPFM.";
+                msg.innerText = "Você pagará mais devido à tributação de dividendos ou IRPFM.";
             }
         }
 
-        // Init with Compare Tab
         switchTab('compare');
-        calcCompare(); // initial calc
+        calcCompare();
     </script>
 </body>
 </html>
