@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador Lei 15.270/2025 | Validado</title>
+    <title>Simulador Lei 15.270/2025 | Com Máscara R$</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
         .tab-active { border-bottom: 2px solid #2563eb; color: #2563eb; font-weight: 600; }
-        .input-field { @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border; }
+        .input-field { @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border font-mono text-right; }
         .info-tooltip { @apply text-xs text-gray-500 mt-1 italic; }
     </style>
 </head>
@@ -21,7 +21,7 @@
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <div>
                 <h1 class="text-xl font-bold"><i class="fas fa-calculator mr-2"></i>Simulador Lei 15.270/2025</h1>
-                <p class="text-indigo-200 text-sm">Auditoria de Cálculo: Salário Progressivo, Dividendos Cliff & IRPFM</p>
+                <p class="text-indigo-200 text-sm">Com formatação monetária automática (R$)</p>
             </div>
             <div class="text-right hidden sm:block">
                 <span class="bg-indigo-800 text-xs py-1 px-3 rounded text-indigo-200">Vigência: 01/01/2026</span>
@@ -33,15 +33,15 @@
     <main class="max-w-6xl mx-auto p-4">
         
         <!-- Tabs -->
-        <div class="flex border-b border-gray-300 mb-6 bg-white rounded-t-lg px-2 pt-2">
-            <button onclick="switchTab('salary')" id="tab-salary" class="tab-active px-6 py-3 hover:bg-gray-50 rounded-t-lg transition">
-                1. Renda Trabalho (Mensal)
+        <div class="flex border-b border-gray-300 mb-6 bg-white rounded-t-lg px-2 pt-2 overflow-x-auto">
+            <button onclick="switchTab('salary')" id="tab-salary" class="tab-active px-6 py-3 hover:bg-gray-50 rounded-t-lg transition whitespace-nowrap">
+                1. Renda Trabalho
             </button>
-            <button onclick="switchTab('dividends')" id="tab-dividends" class="px-6 py-3 text-gray-500 hover:bg-gray-50 rounded-t-lg transition">
-                2. Dividendos (Fonte)
+            <button onclick="switchTab('dividends')" id="tab-dividends" class="px-6 py-3 text-gray-500 hover:bg-gray-50 rounded-t-lg transition whitespace-nowrap">
+                2. Dividendos
             </button>
-            <button onclick="switchTab('irpfm')" id="tab-irpfm" class="px-6 py-3 text-gray-500 hover:bg-gray-50 rounded-t-lg transition">
-                3. Imposto Mínimo (Anual)
+            <button onclick="switchTab('irpfm')" id="tab-irpfm" class="px-6 py-3 text-gray-500 hover:bg-gray-50 rounded-t-lg transition whitespace-nowrap">
+                3. Imposto Mínimo
             </button>
         </div>
 
@@ -54,17 +54,21 @@
                     <!-- Inputs -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">Rendimento Tributável (Bruto)</label>
-                        <input type="number" id="sal-bruto" class="input-field" placeholder="R$ 0,00" value="6000" oninput="calcSalary()">
-                        <p class="info-tooltip">Salários, Pró-labore, Horas Extras.</p>
+                        <!-- type="text" para aceitar a máscara R$ -->
+                        <input type="text" inputmode="numeric" id="sal-bruto" class="input-field text-lg font-bold text-blue-900" 
+                               value="R$ 6.000,00" oninput="formatCurrency(this); calcSalary()">
+                        <p class="info-tooltip">Digite apenas números. O sistema formata (centavos automáticos).</p>
 
                         <div class="grid grid-cols-2 gap-4 mt-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Dependentes</label>
-                                <input type="number" id="sal-deps" class="input-field" value="0" oninput="calcSalary()">
+                                <!-- Dependentes continua number pois é quantidade -->
+                                <input type="number" id="sal-deps" class="input-field text-center" value="0" oninput="calcSalary()">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Outras Deduções</label>
-                                <input type="number" id="sal-outras" class="input-field" value="0" oninput="calcSalary()">
+                                <input type="text" inputmode="numeric" id="sal-outras" class="input-field" 
+                                       placeholder="R$ 0,00" oninput="formatCurrency(this); calcSalary()">
                             </div>
                         </div>
                     </div>
@@ -73,11 +77,11 @@
                     <div class="bg-slate-50 p-4 rounded border border-slate-200">
                         <div class="flex justify-between mb-2 text-sm">
                             <span>(-) INSS Estimado:</span>
-                            <span class="font-mono text-red-600" id="res-inss">R$ 0,00</span>
+                            <span class="font-mono text-red-600" id="res-inss">R$ 649,64</span>
                         </div>
                         <div class="flex justify-between mb-2 text-sm font-bold text-slate-700">
                             <span>(=) Base de Cálculo:</span>
-                            <span class="font-mono" id="res-base">R$ 0,00</span>
+                            <span class="font-mono" id="res-base">R$ 5.350,36</span>
                         </div>
                         
                         <div class="my-3 border-t border-slate-200 pt-2">
@@ -117,10 +121,12 @@
                         </div>
 
                         <label class="block text-sm font-semibold text-gray-700">Já distribuído este mês (mesma fonte)</label>
-                        <input type="number" id="div-acumulado" class="input-field mb-4" value="0" oninput="calcDividends()">
+                        <input type="text" inputmode="numeric" id="div-acumulado" class="input-field mb-4" 
+                               placeholder="R$ 0,00" oninput="formatCurrency(this); calcDividends()">
 
                         <label class="block text-sm font-semibold text-gray-700">Valor a distribuir AGORA</label>
-                        <input type="number" id="div-atual" class="input-field" value="45000" oninput="calcDividends()">
+                        <input type="text" inputmode="numeric" id="div-atual" class="input-field text-lg font-bold text-blue-900" 
+                               value="R$ 45.000,00" oninput="formatCurrency(this); calcDividends()">
                     </div>
 
                     <div class="bg-slate-50 p-4 rounded border border-slate-200 flex flex-col justify-center">
@@ -159,22 +165,22 @@
                     <h3 class="text-sm font-bold uppercase text-gray-500 mb-3 border-b pb-1">1. Renda Global Ampliada (RGA)</h3>
                     
                     <label class="block text-xs font-semibold text-gray-700 mt-2">Salários/Pró-labore (Anual)</label>
-                    <input type="number" id="irpfm-salario" class="input-field text-sm" oninput="calcIRPFM()">
+                    <input type="text" inputmode="numeric" id="irpfm-salario" class="input-field text-sm" placeholder="R$ 0,00" oninput="formatCurrency(this); calcIRPFM()">
 
                     <label class="block text-xs font-semibold text-gray-700 mt-2 text-indigo-700">Dividendos ISENTOS (< 50k/mês)</label>
-                    <input type="number" id="irpfm-div-isentos" class="input-field text-sm border-indigo-200 bg-indigo-50" oninput="calcIRPFM()">
+                    <input type="text" inputmode="numeric" id="irpfm-div-isentos" class="input-field text-sm border-indigo-200 bg-indigo-50" placeholder="R$ 0,00" oninput="formatCurrency(this); calcIRPFM()">
                     <p class="text-[10px] text-indigo-600">Entra na base, mas crédito de imposto é 0.</p>
 
                     <label class="block text-xs font-semibold text-gray-700 mt-2">Dividendos TRIBUTADOS (> 50k/mês)</label>
-                    <input type="number" id="irpfm-div-trib" class="input-field text-sm" oninput="calcIRPFM()">
+                    <input type="text" inputmode="numeric" id="irpfm-div-trib" class="input-field text-sm" placeholder="R$ 0,00" oninput="formatCurrency(this); calcIRPFM()">
 
                     <label class="block text-xs font-semibold text-gray-700 mt-2">Aplicações Financeiras / Outros</label>
-                    <input type="number" id="irpfm-finan" class="input-field text-sm" oninput="calcIRPFM()">
+                    <input type="text" inputmode="numeric" id="irpfm-finan" class="input-field text-sm" placeholder="R$ 0,00" oninput="formatCurrency(this); calcIRPFM()">
 
                     <!-- EXCLUSÃO -->
                     <div class="mt-4 pt-4 border-t border-dashed border-gray-300 opacity-75">
                         <label class="block text-xs font-semibold text-gray-500">Ganho de Capital (Bolsa) - EXCLUÍDO</label>
-                        <input type="number" id="irpfm-excluido" class="input-field text-sm bg-gray-100 text-gray-400" placeholder="Não soma na RGA" oninput="calcIRPFM()">
+                        <input type="text" inputmode="numeric" id="irpfm-excluido" class="input-field text-sm bg-gray-100 text-gray-400" placeholder="R$ 0,00" oninput="formatCurrency(this); calcIRPFM()">
                         <p class="text-[10px] text-gray-400">Renda Variável em bolsa não compõe RGA.</p>
                     </div>
                 </div>
@@ -184,14 +190,15 @@
                     <h3 class="text-sm font-bold uppercase text-gray-500 mb-3 border-b pb-1">2. Crédito de Imposto Pago</h3>
                     
                     <label class="block text-xs font-semibold text-gray-700 mt-2">IRRF sobre Salários</label>
-                    <input type="number" id="cred-salario" class="input-field text-sm" oninput="calcIRPFM()">
+                    <input type="text" inputmode="numeric" id="cred-salario" class="input-field text-sm" placeholder="R$ 0,00" oninput="formatCurrency(this); calcIRPFM()">
 
                     <label class="block text-xs font-semibold text-gray-700 mt-2">IRRF sobre Dividendos (10%)</label>
-                    <input type="number" id="cred-dividendos" class="input-field text-sm" readonly>
+                    <!-- Campo somente leitura, cálculo automático -->
+                    <input type="text" id="cred-dividendos" class="input-field text-sm bg-gray-50 text-gray-500" readonly value="R$ 0,00">
                     <p class="text-[10px] text-gray-500">Calculado auto (10% dos Div. Tributados).</p>
 
                     <label class="block text-xs font-semibold text-gray-700 mt-2">IR sobre Aplicações (15-22.5%)</label>
-                    <input type="number" id="cred-finan" class="input-field text-sm" placeholder="Estimado 15%" oninput="calcIRPFM()">
+                    <input type="text" inputmode="numeric" id="cred-finan" class="input-field text-sm" placeholder="R$ 0,00" oninput="formatCurrency(this); calcIRPFM()">
                 </div>
 
                 <!-- Column 3: Resultado -->
@@ -232,9 +239,39 @@
     </main>
 
     <script>
-        // --- Formatação ---
+        // --- Formatação e Máscaras ---
         const formatBRL = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
-        const parse = (id) => parseFloat(document.getElementById(id).value) || 0;
+
+        // Função de Máscara de Entrada
+        function formatCurrency(input) {
+            let value = input.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            
+            if (value === '') {
+                input.value = '';
+                return;
+            }
+            
+            // Converte para float dividindo por 100 (centavos)
+            const floatValue = parseFloat(value) / 100;
+            
+            // Formata de volta para BRL
+            input.value = floatValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        // Função Parse (Lê o valor formatado e devolve número puro para cálculo)
+        function parse(id) {
+            const el = document.getElementById(id);
+            if (!el) return 0;
+            
+            // Se for dependentes (type="number"), lê direto
+            if (el.type === 'number') {
+                return parseFloat(el.value) || 0;
+            }
+            
+            // Se for moeda (type="text"), limpa a formatação
+            const clean = el.value.replace(/\D/g, ''); // Remove R$, pontos, vírgulas
+            return (parseFloat(clean) / 100) || 0;
+        }
 
         // --- Navegação ---
         function switchTab(tabId) {
@@ -251,11 +288,10 @@
         // --- CÁLCULO 1: SALÁRIO ---
         function calcSalary() {
             const bruto = parse('sal-bruto');
-            const deps = parse('sal-deps');
+            const deps = parse('sal-deps'); // numérico
             const outras = parse('sal-outras');
 
             // 1. INSS Simplificado (Teto 2025/26 estimado ~998)
-            // Lógica simplificada progressiva
             let inss = 0;
             if (bruto < 1518) inss = bruto * 0.075;
             else if (bruto < 2793) inss = (1518*0.075) + ((bruto-1518)*0.09);
@@ -268,22 +304,15 @@
             let irrf = 0;
             let logic = "";
 
-            // Lógica da Lei 15.270
             if (base <= 5000) {
                 irrf = 0;
                 logic = "Isenção total (até R$ 5.000,00).";
             } else if (base <= 7350) {
-                // FAIXA DE TRANSIÇÃO (Fade-in)
-                // Imposto = (Base * 15%) - Ded.Padrao15% - RedutorVariavel
-                // Ded.Padrão 15% histórica ~370.40. 
-                // Redutor = 978.62 - (0.133145 * Base)
-                
+                // FAIXA DE TRANSIÇÃO
                 const deducaoPadrao15 = 370.40; 
                 const redutorVariavel = Math.max(0, 978.62 - (0.133145 * base));
-                
                 irrf = (base * 0.15) - deducaoPadrao15 - redutorVariavel;
                 irrf = Math.max(0, irrf);
-                
                 logic = `Base (${formatBRL(base)}) × 15% - Ded.Padrão - Redutor Variável de ${formatBRL(redutorVariavel)}`;
             } else if (base <= 9000) {
                 irrf = (base * 0.15) - 370.40;
@@ -319,15 +348,8 @@
             if (total > limit) {
                 status = "TRIBUTADO (10%)";
                 colorClass = "text-red-600 bg-red-50 border-red-200";
-                
-                // Imposto Total Devido sobre TUDO
                 const impostoTotal = total * 0.10;
-                
-                // O que já foi pago antes?
-                // Se o acumulado anterior já era > 50k, pagou 10% sobre ele.
-                // Se era < 50k, pagou 0.
                 const pagoAnterior = (acumulado > limit) ? acumulado * 0.10 : 0;
-                
                 retencao = impostoTotal - pagoAnterior;
             }
 
@@ -345,42 +367,35 @@
             const divIsentos = parse('irpfm-div-isentos');
             const divTrib = parse('irpfm-div-trib');
             const finan = parse('irpfm-finan');
-            const excluido = parse('irpfm-excluido'); // Visual only calculation check
+            const excluido = parse('irpfm-excluido');
 
             const credSal = parse('cred-salario');
             const credFinan = parse('cred-finan');
             
-            // Auto calculate dividend tax credit based on taxable input
             const credDiv = divTrib * 0.10;
-            document.getElementById('cred-dividendos').value = credDiv.toFixed(2);
+            // Atualiza visualização do crédito de dividendos
+            document.getElementById('cred-dividendos').value = formatBRL(credDiv);
 
-            // 1. RGA Calculation
-            // CRITICAL: Exempt dividends ARE INCLUDED. Stock gains ARE EXCLUDED.
-            const rga = salarios + divIsentos + divTrib + finan; // + excluido is ignored
-
-            // 2. Rate Calculation
+            const rga = salarios + divIsentos + divTrib + finan;
             const piso = 600000;
             const teto = 1200000;
             let rate = 0;
 
             if (rga > piso) {
                 if (rga >= teto) rate = 0.10;
-                else rate = 0.10 * ((rga - piso) / (piso)); // Formula Linear
+                else rate = 0.10 * ((rga - piso) / (piso));
             }
 
-            // 3. Tax Math
             const teorico = rga * rate;
             const pago = credSal + credDiv + credFinan;
             const catchup = Math.max(0, teorico - pago);
 
-            // UI Updates
             document.getElementById('res-rga').innerText = formatBRL(rga);
             document.getElementById('res-aliq-min').innerText = (rate * 100).toFixed(2) + "%";
             document.getElementById('res-teorico').innerText = formatBRL(teorico);
             document.getElementById('res-pago').innerText = formatBRL(pago);
             document.getElementById('res-catchup').innerText = formatBRL(catchup);
 
-            // Analysis Message
             const msgEl = document.getElementById('irpfm-msg');
             if (divIsentos > 0 && catchup > 0) {
                 msgEl.innerText = `Atenção: Seus ${formatBRL(divIsentos)} de dividendos isentos entraram na base (RGA), aumentando sua alíquota mínima, mas geraram R$ 0,00 de crédito. Isso causou o imposto adicional.`;
@@ -396,20 +411,14 @@
 
         // --- PROJEÇÃO AUTOMÁTICA ---
         function projectAnnual() {
-            // Get Monthly Data
-            const salBase = parse('sal-bruto'); // Gross monthly
-            const irrfMensal = parseFloat(document.getElementById('res-irrf').innerText.replace('R$','').replace('.','').replace(',','.')) || 0;
+            const salBase = parse('sal-bruto'); 
+            const irrfMensal = parseFloat(document.getElementById('res-irrf').innerText.replace('R$','').replace(/\./g,'').replace(',','.')) || 0;
             
-            const divAtual = parse('div-atual'); // Assuming this is average monthly
-            const divAcumulado = parse('div-acumulado'); // Ignored for annual projection, taking "Current Distribution" as average
+            const divAtual = parse('div-atual');
             
-            // Annualize
-            // Salary: 13.3 payments (12 months + 13th + 1/3 vacation approx)
             const anualSal = salBase * 13.3;
             const anualIrSal = irrfMensal * 13.3;
 
-            // Dividends
-            // Logic: If monthly < 50k, all annual is Exempt. If > 50k, all annual is Taxable.
             let anualDivIsento = 0;
             let anualDivTrib = 0;
 
@@ -419,16 +428,13 @@
                 anualDivTrib = divAtual * 12;
             }
 
-            // Fill Form
-            document.getElementById('irpfm-salario').value = anualSal.toFixed(2);
-            document.getElementById('irpfm-div-isentos').value = anualDivIsento.toFixed(2);
-            document.getElementById('irpfm-div-trib').value = anualDivTrib.toFixed(2);
-            document.getElementById('cred-salario').value = anualIrSal.toFixed(2);
+            // Define valores com formatação R$
+            document.getElementById('irpfm-salario').value = formatBRL(anualSal);
+            document.getElementById('irpfm-div-isentos').value = formatBRL(anualDivIsento);
+            document.getElementById('irpfm-div-trib').value = formatBRL(anualDivTrib);
+            document.getElementById('cred-salario').value = formatBRL(anualIrSal);
 
-            // Trigger calc
             calcIRPFM();
-            
-            // Switch tab
             switchTab('irpfm');
         }
 
